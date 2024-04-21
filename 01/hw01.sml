@@ -6,23 +6,13 @@ fun is_older (date1: (int*int*int),date2: (int*int*int)) =
 fun get_month (date: (int*int*int)) = #2 date
 
 fun number_in_month (dates : (int*int*int) list, target: int) = 
-    let fun count_month (count : int, dates: (int*int*int) list, target : int) =
-        if null dates then count
-            else 
-                if target = get_month(hd dates) then count_month(count + 1, tl dates, target) 
-                else count_month(count, tl dates, target)
-    in
-        count_month(0, dates, target)
-    end
+    if null dates then 0
+    else if #2 (hd dates) = target then 1 + number_in_month(tl dates, target)
+    else number_in_month(tl dates, target)
 
 fun number_in_months (dates : (int*int*int) list, targets: int list) = 
-    let fun count_months (count : int, dates: (int*int*int) list, targets : int list) =
-        if null targets then count
-        else 
-            count_months (count + number_in_month(dates, hd targets), dates, tl targets)
-    in
-        count_months(0, dates, targets)
-    end
+    if null targets then 0
+    else if number_in_month(dates, hd targets) + number_in_months(dates, tl targets)
 
 fun dates_in_month (dates : (int*int*int) list, target: int) = 
     if null dates then []
@@ -36,12 +26,8 @@ fun dates_in_months (dates : (int*int*int) list, targets: int list) =
         dates_in_month(dates, hd targets) @ dates_in_months(dates, tl targets)
 
 fun get_nth (lis: string list, num: int) = 
-    let fun count_nth(lis: string list, count: int, target: int) = 
-        if count = target then hd lis
-        else count_nth(tl lis, count + 1, target)
-    in
-        count_nth(lis, 1, num)
-    end
+    if num = 1 then hd lis
+    else get_nth(tl lis, num - 1)
 
 val month_name = ["January", "February", "March", "Spring", "May", "June", "July", "August", 
                 "September", "October", "November", "December"]
@@ -50,15 +36,8 @@ fun date_to_string (year : int, month : int, day: int) =
     get_nth(month_name, month) ^ " " ^ Int.toString day ^ "," ^ " " ^ Int.toString year
 
 fun number_before_reaching_sum (target : int, lis: int list) = 
-    let
-        fun count_before_reaching_sum (lis: int list, accum: int, target: int, count: int) =
-            if accum >= target then count
-            else if null lis then count
-            else count_before_reaching_sum(tl lis, accum + hd lis, target, count + 1)
-    in
-        if null lis then 0
-        else count_before_reaching_sum(tl lis, hd lis, target, 0)
-    end
+    if hd lis >= target then 0
+    else 1 + number_before_reaching_sum(target - (hd lis), tl lis)
 
 val month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
