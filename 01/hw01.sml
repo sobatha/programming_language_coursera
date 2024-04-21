@@ -43,15 +43,58 @@ fun get_nth (lis: string list, num: int) =
         count_nth(lis, 1, num)
     end
 
+val month_name = ["January", "February", "March", "Spring", "May", "June", "July", "August", 
+                "September", "October", "November", "December"]
 
-(*
-fun date_to_string (2013, 6, 1) = "June 1, 2013"
+fun date_to_string (year : int, month : int, day: int) = 
+    get_nth(month_name, month) ^ " " ^ Int.toString day ^ "," ^ " " ^ Int.toString year
 
-fun number_before_reaching_sum (10, [1,2,3,4,5]) = 3
+fun number_before_reaching_sum (target : int, lis: int list) = 
+    let
+        fun count_before_reaching_sum (lis: int list, accum: int, target: int, count: int) =
+            if accum >= target then count
+            else if null lis then count
+            else count_before_reaching_sum(tl lis, accum + hd lis, target, count + 1)
+    in
+        if null lis then 0
+        else count_before_reaching_sum(tl lis, hd lis, target, 0)
+    end
 
-fun what_month 70 = 3
+val month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-fun month_range (31, 34) = [1,2,2,2]
+fun what_month (day: int) = 
+    number_before_reaching_sum(day, month_days) + 1
+    
+fun month_range (from: int, to: int) =
+    if from > to then []
+    else what_month(from)::month_range(from+1, to)
 
-fun oldest([(2012,2,28),(2011,3,31),(2011,4,28)]) = SOME (2011,3,31)
- *)
+fun oldest(dates: (int*int*int) list) = 
+    if null dates then NONE
+    else 
+        let val tl_ans = oldest(tl dates)
+        in 
+            if isSome tl_ans andalso is_older(valOf tl_ans, hd dates)
+            then tl_ans
+            else SOME (hd dates)
+        end
+
+fun find(dates: (int*int*int) list, target: (int*int*int)) = 
+    if null dates then false
+    else if #1 target = #1 (hd dates) 
+        andalso #2 target = #2 (hd dates) 
+        andalso #3 target = #3 (hd dates) 
+        then true
+    else find(tl dates, target)
+
+fun remove_duplicates(dates: (int*int*int) list) = 
+    if null dates then []
+    else 
+        let val tl_ans = remove_duplicates(tl dates)
+        in
+            if find(tl_ans, hd dates) then tl_ans
+            else (hd dates)::tl_ans
+        end
+
+fun number_in_months_challenge(dates : (int*int*int) list, target: int) =
+    number_in_month(remove_duplicates(dates), target)
