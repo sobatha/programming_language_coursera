@@ -7,15 +7,15 @@ val test1 = all_except_option ("string", ["string"]) = SOME []
 val test1_2 = all_except_option ("a", ["a", "b", "c"]) = SOME ["b", "c"]
 val test1_3 = all_except_option ("d", ["a", "b", "c"]) = NONE
 val test1_4 = all_except_option ("d", []) = NONE
-(*
 val test2 = get_substitutions1 ([["foo"],["there"]], "foo") = []
-
+val test2_1 = get_substitutions1 ([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]],"Fred") = ["Fredrick","Freddie","F"] 
 val test3 = get_substitutions2 ([["foo"],["there"]], "foo") = []
-
+val test3_1 = get_substitutions2 ([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]],"Fred") = ["Fredrick","Freddie","F"] 
 val test4 = similar_names ([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]], {first="Fred", middle="W", last="Smith"}) =
 	    [{first="Fred", last="Smith", middle="W"}, {first="Fredrick", last="Smith", middle="W"},
 	     {first="Freddie", last="Smith", middle="W"}, {first="F", last="Smith", middle="W"}]
 
+(*
 val test5 = card_color (Clubs, Num 2) = Black
 
 val test6 = card_value (Clubs, Num 2) = 2
