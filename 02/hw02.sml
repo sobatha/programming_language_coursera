@@ -48,7 +48,6 @@ fun similar_names (names, {first, last, middle}) =
         {first=first, last=last, middle=middle} :: create_similar_name (get_substitutions2 (names, first))
     end 
 
-(*
 
 
 (* you may assume that Num is always used with values 2, 3, ..., 10
@@ -64,15 +63,55 @@ exception IllegalMove
 
 (* put your solutions for problem 2 here *)
 
-fun card_color (card) = Black
+fun card_color (card) = 
+    let val (suit, rank) = card
+    in
+        case suit of 
+        Clubs => Black
+        | Spades => Black
+        | _ => Red
+    end
 
-fun card_value (card) = 2
+fun card_value (card) = 
+    let val (suit, rank) = card
+    in
+        case rank of
+          Ace => 11
+        | Num i => i
+        | _ => 10
+    end
 
-fun remove_card (cards, card, exp) = []
+fun remove_card (cards, card, exp) = 
+    let fun except (acc, lis, found) = 
+        case (acc, lis, found) of 
+        (acc, [], f) => (acc, [], f)
+        | (acc, x::xs', true) => except(acc @ [x], xs', true) (* means already removed *)
+        | (acc, x::xs', false) => if card = x then except(acc, xs', true)
+                    else except(acc @ [x], xs', false)
+    in 
+        let val (acc, ls, found) = except([], cards, false) 
+        in
+            if found then acc else raise exp
+        end
+    end
 
-fun all_same_color (cards) = true
+fun all_same_color (cards) = 
+    let 
+        fun same_color(x, y) = 
+            if card_color(x) = card_color(y) then true else false
+        
+    in 
+        case cards of 
+        [] => true
+        | x::[] => true
+        | x::y::z => if same_color(x, y) then all_same_color(y::z) else false
+    end
 
+
+(*
 fun sum_cards (cards) = 4
+
+
 
 fun score (cards, goal) = 4
 

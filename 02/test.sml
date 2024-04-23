@@ -15,14 +15,21 @@ val test4 = similar_names ([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie"
 	    [{first="Fred", last="Smith", middle="W"}, {first="Fredrick", last="Smith", middle="W"},
 	     {first="Freddie", last="Smith", middle="W"}, {first="F", last="Smith", middle="W"}]
 
-(*
 val test5 = card_color (Clubs, Num 2) = Black
-
+val test5_1 = card_color (Spades, Num 2) = Black
+val test5_2 = card_color (Hearts, Num 2) = Red
+val test5_3 = card_color (Diamonds, Num 2) = Red
 val test6 = card_value (Clubs, Num 2) = 2
-
+val test6_1 = card_value (Clubs, Ace) = 11
+val test6_2 = card_value (Clubs, King) = 10
+val test6_3 = card_value (Clubs, Queen) = 10
 val test7 = remove_card ([(Hearts, Ace)], (Hearts, Ace), IllegalMove) = []
 
 val test8 = all_same_color [(Hearts, Ace), (Hearts, Ace)] = true
+val test8_2 = all_same_color [(Hearts, Ace), (Clubs, Ace)] = false
+
+(*
+
 
 val test9 = sum_cards [(Clubs, Num 2),(Clubs, Num 2)] = 4
 
