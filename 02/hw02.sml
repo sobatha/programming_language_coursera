@@ -108,13 +108,35 @@ fun all_same_color (cards) =
     end
 
 
-(*
-fun sum_cards (cards) = 4
+fun sum_cards (cards) = 
+    let fun sum(acc, cards) = 
+        case cards of 
+        [] => acc
+        | x::y => sum(acc+card_value(x), y)
+    in sum(0, cards) end
 
+fun score (cards, goal) = 
+    let 
+        val sum = sum_cards(cards)
+        val is_same_color = all_same_color(cards)
+    in
+        if sum > goal then 
+            if is_same_color then (sum - goal) * 3 div 2 else (sum - goal) * 3
+        else 
+            if is_same_color then (goal - sum) div 2 else goal - sum
 
+    end
 
-fun score (cards, goal) = 4
+fun officiate (cards, moves, goal) = 
+    let fun process_move(moves, cards, held_cards) = 
+        case moves of 
+          [] => score(held_cards, goal)
+        | Discard card::rest_moves => process_move(rest_moves, cards, remove_card(held_cards, card, IllegalMove))
+        | Draw::rest_moves => case cards of 
+                     [] => score(held_cards, goal)
+                    | c::cards' =>  if sum_cards(c::held_cards) > goal then score(c::held_cards, goal)
+                                else process_move(rest_moves, cards', c::held_cards)
+    in
+        process_move(moves, cards, [])
+    end
 
-fun officiate (cards, moves, goal) = 6
-             
-*)
