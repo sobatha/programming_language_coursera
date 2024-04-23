@@ -4,7 +4,10 @@
 (* All the tests should evaluate to true. For example, the REPL should say: val test1 = true : bool *)
 
 val test1 = all_except_option ("string", ["string"]) = SOME []
-
+val test1_2 = all_except_option ("a", ["a", "b", "c"]) = SOME ["b", "c"]
+val test1_3 = all_except_option ("d", ["a", "b", "c"]) = NONE
+val test1_4 = all_except_option ("d", []) = NONE
+(*
 val test2 = get_substitutions1 ([["foo"],["there"]], "foo") = []
 
 val test3 = get_substitutions2 ([["foo"],["there"]], "foo") = []
@@ -38,4 +41,4 @@ val test13 = ((officiate([(Clubs,Jack),(Spades,Num(8))],
                false) 
               handle IllegalMove => true)
              
-             
+*)

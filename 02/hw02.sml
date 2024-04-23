@@ -7,8 +7,21 @@ fun same_string(s1 : string, s2 : string) =
     s1 = s2
 
 (* put your solutions for problem 1 here *)
-fun all_except_option (target, lis) = SOME []
+fun all_except_option (target, lis) = 
+    (* acc holds filtered list and found holds whether list contained target string or not*)
+    let fun except (acc, lis, found) = 
+        case (acc, lis, found) of 
+        (acc, [], f) => (acc, [], f)
+        | (acc, x::xs', f) => if same_string(target, x) then except(acc, xs', true)
+                    else except(acc @ [x], xs', f)
+    in 
+        let val (acc, ls, found) = except([], lis, false) 
+        in
+            if found then SOME acc else NONE
+        end
+    end
 
+(*
 fun get_substitutions1 (lis, target) = []
 
 fun get_substitutions2 (lis, target) = []
@@ -32,7 +45,7 @@ fun card_color (card) = Black
 
 fun card_value (card) = 2
 
-fun remove_card (cards, card, exception) = []
+fun remove_card (cards, card, exp) = []
 
 fun all_same_color (cards) = true
 
@@ -42,4 +55,4 @@ fun score (cards, goal) = 4
 
 fun officiate (cards, moves, goal) = 6
              
-             
+*)
