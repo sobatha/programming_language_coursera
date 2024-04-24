@@ -8,21 +8,21 @@ val test1_1 = only_capitals ["Abc","abc","Css"] = ["Abc","Css"]
 val test2 = longest_string1 ["A","bc","C"] = "bc"
 val test2_1 = longest_string1 ["A","bc","Cd"] = "bc"
 val test2_2 = longest_string1 [] = ""
-(*
-
 val test3 = longest_string2 ["A","bc","C"] = "bc"
-
-val test4a = longest_string3 ["A","bc","C"] = "bc"
-
+val test3_1 = longest_string2 ["A","bc","Cd"] = "Cd"
+val test4a = longest_string3 ["A","bc","Cd"] = "bc"
 val test4b = longest_string4 ["A","B","C"] = "C"
 
 val test5 = longest_capitalized ["A","bc","C"] = "A"
-
 val test6 = rev_string "abc" = "cba"
-
 val test7 = first_answer (fn x => if x > 3 then SOME x else NONE) [1,2,3,4,5] = 4
-
 val test8 = all_answers (fn x => if x = 1 then SOME [x] else NONE) [2,3,4,5,6,7] = NONE
+val test8_1 = all_answers (fn x => if x > 3 then SOME [x] else NONE) [1,2,3,4,5] = SOME [5, 4]
+val test8_2 = all_answers (fn x => if x > 3 then SOME [x] else NONE) [] = SOME []
+
+(*
+
+
 
 val test9a = count_wildcards Wildcard = 1
 
