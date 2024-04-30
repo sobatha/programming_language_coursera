@@ -21,6 +21,16 @@
 (struct closure (env fun) #:transparent) 
 
 ;; Problem 1
+;(a) racket -> mupl
+(define (racketlist->mupllist rls) 
+  (cond [(null? rls) (aunit)]
+        [#t (apair (car rls) (racketlist->mupllist (cdr rls)))]))
+
+;(b) mupl -> racket
+(define (mupllist->racketlist mls)
+  (cond [(aunit? mls) null]
+        [#t (cons (apair-e1 mls) (mupllist->racketlist (apair-e2 mls)))]))
+
 ;; Problem 2
 
 ;; lookup a variable in an environment
@@ -85,3 +95,10 @@
 (define (eval-exp-c e)
   (eval-under-env-c (compute-free-vars e) null))
 
+
+(define (eval-pair p)
+  (let ([test-apair (lambda (x) ((apair? x) x (error "need to be pair")) )])
+  cond  [(aunit? p) null]
+        [(fst? p) (test-apair (apair-e1 p))]
+        [(snd? p) (test-apair (apair-e2 p))]
+))
