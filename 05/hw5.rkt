@@ -65,6 +65,27 @@
          (if (and (int? v1) (int? v2))
             (if (> (int-num v1) (int-num v2)) (eval-under-env (ifgreater-e3 e) env) (eval-under-env (ifgreater-e4 e) env))
             (error "must compair two ints")))]
+        [(fun? e) (closure env e)]
+        [(closure? e) e]
+        [(call? e) (
+          letrec (
+            [clsr (if (closure? (eval-under-env (call-funexp e) env)) 
+                    (eval-under-env (call-funexp e) env)
+                    (error "call must take closure"))]
+            [param (eval-under-env (call-actual e) env)]
+            [f (if (fun? (closure-fun clsr)) (closure-fun clsr) (error "closure must take fun"))]
+            [arg (fun-formal f)]
+            [env-fun (closure-env clsr)]
+            [scope (cons (cons (fun-nameopt f) f) (cons (cons arg param) env-fun))]
+            )
+            (eval-under-env (fun-body f) scope)
+        )]
+        [(mlet? e) 
+          (let ([var (mlet-var e)]
+                [ex (eval-under-env (mlet-e e) env)])
+          (if (string? var) 
+            (eval-under-env (mlet-body e) (cons (cons var ex) env))
+            (error "variable name must be string")))]
         [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
         [(fst? e) 
           (let ([p (eval-under-env (fst-e e) env)])
@@ -113,9 +134,3 @@
   (eval-under-env-c (compute-free-vars e) null))
 
 
-(define (eval-pair p)
-  (let ([test-apair (lambda (x) ((apair? x) x (error "need to be pair")) )])
-  cond  [(aunit? p) null]
-        [(fst? p) (test-apair (apair-e1 p))]
-        [(snd? p) (test-apair (apair-e2 p))]
-))
