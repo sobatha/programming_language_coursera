@@ -65,6 +65,14 @@
          (if (and (int? v1) (int? v2))
             (if (> (int-num v1) (int-num v2)) (eval-under-env (ifgreater-e3 e) env) (eval-under-env (ifgreater-e4 e) env))
             (error "must compair two ints")))]
+        [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
+        [(fst? e) 
+          (let ([p (eval-under-env (fst-e e) env)])
+          (if (apair? p) (apair-e1 p) (error "must be pair")))]
+        [(snd? e) 
+          (let ([p (eval-under-env (snd-e e) env)])
+          (if (apair? p) (apair-e2 p) (error "must be pair")))]
+        [(isaunit? e) (if (aunit? (eval-under-env (isaunit-e e) env)) (int 1) (int 0))]
         [#t (error (format "bad MUPL expression: ~v" e))]))
 
 ;; Do NOT change
