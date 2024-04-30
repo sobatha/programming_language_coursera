@@ -48,6 +48,7 @@
   (cond [(var? e) 
          (envlookup env (var-string e))]
         [(int? e) e]
+        [(aunit? e) e]
         [(add? e) 
          (let ([v1 (eval-under-env (add-e1 e) env)]
                [v2 (eval-under-env (add-e2 e) env)])
@@ -102,7 +103,8 @@
         
 ;; Problem 3
 
-(define (ifaunit e1 e2 e3) "CHANGE")
+(define (ifaunit e1 e2 e3) (
+  if (= 1 (int-num (eval-exp (isaunit e1)))) (eval-exp e2) (eval-exp e3)))
 
 (define (mlet* lstlst e2) "CHANGE")
 
