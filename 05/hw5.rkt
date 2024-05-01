@@ -103,12 +103,14 @@
         
 ;; Problem 3
 
-(define (ifaunit e1 e2 e3) (
-  if (= 1 (int-num (eval-exp (isaunit e1)))) (eval-exp e2) (eval-exp e3)))
+(define (ifaunit e1 e2 e3) 
+  (ifgreater (isaunit e1) (int 0) e2 e3))
 
 (define (mlet* lstlst e2) "CHANGE")
 
-(define (ifeq e1 e2 e3 e4) "CHANGE")
+(define (ifeq e1 e2 e3 e4) 
+  (let ([_x e1] [_y e2])
+  (ifgreater (ifgreater _x _y (int 0) (int 1)) (ifgreater _y _x (int 1) (int 0)) e3 e4)))
 
 ;; Problem 4
 
