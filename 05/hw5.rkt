@@ -70,9 +70,10 @@
         [(closure? e) e]
         [(call? e) (
           letrec (
-            [clsr (if (closure? (eval-under-env (call-funexp e) env)) 
-                    (eval-under-env (call-funexp e) env)
-                    (error "call must take closure"))]
+            [clsr (let ([might-fun (eval-under-env (call-funexp e) env)])
+                    (if (closure? might-fun) might-fun
+                    (if (fun? might-fun) (eval-under-env might-fun env)
+                    (begin (print might-fun) (error "call must take closure")))))]
             [param (eval-under-env (call-actual e) env)]
             [f (if (fun? (closure-fun clsr)) (closure-fun clsr) (error "closure must take fun"))]
             [arg (fun-formal f)]
@@ -105,8 +106,11 @@
 
 (define (ifaunit e1 e2 e3) 
   (ifgreater (isaunit e1) (int 0) e2 e3))
-
-(define (mlet* lstlst e2) "CHANGE")
+  
+(define (mlet* lstlst e2) 
+  (cond [(null? lstlst) e2]
+        [(null? (cdr lstlst)) (mlet (car (car lstlst)) (cdr (car lstlst)) e2)]
+        [#t (mlet (car (car lstlst)) (cdr (car lstlst)) (mlet (cdr lstlst) e2))]))
 
 (define (ifeq e1 e2 e3 e4) 
   (let ([_x e1] [_y e2])
@@ -114,11 +118,19 @@
 
 ;; Problem 4
 
-(define mupl-map "CHANGE")
+(define mupl-map (fun "m-map" "f"
+  (fun "curry-map" "lst"
+    (ifaunit (var "lst") (aunit) (apair (call (var "f") (fst (var "lst"))) (call (var "curry-map") (snd (var "lst"))))
+    ))))
 
 (define mupl-mapAddN 
-  (mlet "map" mupl-map
-        "CHANGE (notice map is now in MUPL scope)"))
+  (mlet "map" mupl-map 
+  (fun "addNmap" "n" 
+    (fun "mapAdd" "lst" 
+      ;call map by ( a -> a + n ), then call returned curried function by lst
+      (call 
+        (call (var "map") (fun "add" "num" (add (var "num") (var "n"))))
+        (var "lst"))))))
 
 ;; Challenge Problem
 
