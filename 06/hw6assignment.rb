@@ -12,12 +12,25 @@ end
 
 class MyBoard < Board
   # your enhancements here
-
+  def rotate_upside_down
+    if !game_over? and @game.is_running?
+      @current_block.move(0, 0, 2)
+    end
+    draw
+  end
 end
 
 class MyTetris < Tetris
   # your enhancements here
+  def set_board
+    super
+    @board = MyBoard.new(self)
+  end
 
+  def key_bindings
+    super
+    @root.bind('u', proc {@board.rotate_upside_down})
+  end
 end
 
 
