@@ -20,6 +20,7 @@ datatype geom_exp =
 	 | Let of string * geom_exp * geom_exp (* let s = e1 in e2 *)
 	 | Var of string
 (* CHANGE add shifts for expressions of the form Shift(deltaX, deltaY, exp *)
+	 | Shift of real * real * geom_exp
 
 exception BadProgram of string
 exception Impossible of string
@@ -196,5 +197,36 @@ fun eval_prog (e,env) =
       | Let(s,e1,e2) => eval_prog (e2, ((s, eval_prog(e1,env)) :: env))
       | Intersect(e1,e2) => intersect(eval_prog(e1,env), eval_prog(e2, env))
 (* CHANGE: Add a case for Shift expressions *)
+	  | Shift(delta_x, delta_y, e) =>
+	  		let val exp = eval_prog (e,env) 
+			in
+	  		case exp of
+			    Point(x, y) => Point(x + delta_x, y + delta_y)
+			  | Line(m, b) => Line(m, b + delta_y - (m * delta_x) )
+			  | VerticalLine(x) => VerticalLine(x + delta_x)
+			  | LineSegment(x1,y1,x2,y2) => LineSegment(x1 + delta_x, y1 + delta_y, x2 + delta_x, y2 + delta_y)
+			  | _ => NoPoints
+			end
 
 (* CHANGE: Add function preprocess_prog of type geom_exp -> geom_exp *)
+fun preprocess_prog exp = 
+  let
+    fun preprocess e =
+      case e of 
+        LineSegment(x1, y1, x2, y2) =>
+          if abs(x1 - x2) < epsilon andalso abs(y1 - y2) < epsilon then
+            Point(x1, y1)
+          else if x1 > x2 orelse (abs(x1 - x2) < epsilon andalso y1 > y2) then
+            LineSegment(x2, y2, x1, y1)
+          else
+            LineSegment(x1, y1, x2, y2)
+      | Intersect(e1, e2) =>
+          Intersect(preprocess e1, preprocess e2)
+      | Let(var, e1, e2) =>
+          Let(var, preprocess e1, preprocess e2)
+      | Shift(dx, dy, e) =>
+          Shift(dx, dy, preprocess e)
+      | _ => e
+  in
+    preprocess exp
+  end
