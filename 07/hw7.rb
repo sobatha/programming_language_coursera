@@ -118,6 +118,41 @@ class Point < GeometryValue
     @x = x
     @y = y
   end
+
+  def eval_prog env 
+    self # all values evaluate to self
+  end
+  def preprocess_prog
+    self # no pre-processing to do here
+  end
+  def shift(dx,dy)
+    Point.new(@x + dx, @y + dy)
+  end
+  def intersect other
+    other.intersectPoint self
+  end
+  def intersectPoint p
+    if real_close_point(@x, @y, p.x, p.y)
+      self
+    else
+      NoPoints.new
+    end
+  end
+  def intersectLine line
+    self # intersection with line and no-points is no-points
+  end
+  def intersectVerticalLine vline
+    self # intersection with line and no-points is no-points
+  end
+  def intersectNoPoints noPoints
+    noPoints.new
+  end
+  # if self is the intersection of (1) some shape s and (2) 
+  # the line containing seg, then we return the intersection of the 
+  # shape s and the seg.  seg is an instance of LineSegment
+  def intersectWithSegmentAsLineResult seg
+    self
+  end
 end
 
 class Line < GeometryValue
